@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — WanderAI{% endblock %}
+
+{% block content %}
+<div class="dashboard-page">
+  <div class="container-fluid px-4 py-4">
+
+    <!-- Header -->
+    <div class="dash-header d-flex align-items-center justify-content-between mb-4 flex-wrap gap-3">
+      <div>
+        <h1 class="dash-title">Travel Dashboard</h1>
+        <p class="text-muted mb-0">Your AI-powered travel command center</p>
+      </div>
+      <a href="/trip-planner" class="btn btn-primary"><i class="bi bi-plus-circle me-2"></i>New Trip</a>
+    </div>
+
+    <!-- Stats Row -->
+    <div class="row g-3 mb-4">
+      <div class="col-6 col-md-3">
+        <div class="dash-stat-card">
+          <div class="stat-icon" style="background:#3b82f620;color:#3b82f6"><i class="bi bi-map"></i></div>
+          <div class="stat-info"><div class="stat-val">0</div><div class="stat-lbl">Trips Planned</div></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="dash-stat-card">
+          <div class="stat-icon" style="background:#10b98120;color:#10b981"><i class="bi bi-geo-alt"></i></div>
+          <div class="stat-info"><div class="stat-val">0</div><div class="stat-lbl">Destinations</div></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="dash-stat-card">
+          <div class="stat-icon" style="background:#f59e0b20;color:#f59e0b"><i class="bi bi-wallet2"></i></div>
+          <div class="stat-info"><div class="stat-val">$0</div><div class="stat-lbl">Total Budgeted</div></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-3">
+        <div class="dash-stat-card">
+          <div class="stat-icon" style="background:#ef444420;color:#ef4444"><i class="bi bi-chat-dots"></i></div>
+          <div class="stat-info"><div class="stat-val" id="chatCount">0</div><div class="stat-lbl">AI Conversations</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main 2-Column Layout -->
+    <div class="row g-4">
+
+      <!-- Left: Chat Panel -->
+      <div class="col-lg-7">
+        <div class="dash-panel chat-panel">
+          <div class="panel-header">
+            <div class="d-flex align-items-center gap-2">
+              <div class="ai-status-dot"></div>
+              <h5 class="mb-0 fw-bold">WanderAI Chat</h5>
+              <span class="badge badge-online ms-1">Online</span>
+            </div>
+            <button class="btn btn-sm btn-outline-secondary" onclick="clearChat()">
+              <i class="bi bi-trash3"></i> Clear
+            </button>
+          </div>
+
+          <div class="chat-messages" id="chatMessages">
+            <div class="chat-message ai-message">
+              <div class="msg-avatar">✈</div>
+              <div class="msg-bubble">
+                <p class="mb-1">Hello, explorer! 🌍 I'm <strong>WanderAI</strong>, your personal IBM Granite-powered travel concierge.</p>
+                <p class="mb-0">Ask me to plan a trip, recommend destinations, build a budget, or answer any travel question. Let's go somewhere amazing!</p>
+                <div class="msg-suggestions mt-2">
+                  <button class="sug-btn" onclick="insertSuggestion(this)">Plan a 7-day Tokyo trip</button>
+                  <button class="sug-btn" onclick="insertSuggestion(this)">Best budget destinations in Asia</button>
+                  <button class="sug-btn" onclick="insertSuggestion(this)">Solo travel Europe safety tips</button>
+                  <button class="sug-btn" onclick="insertSuggestion(this)">Packing list for a tropical trip</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="chat-input-area">
+            <div class="chat-input-wrapper">
+              <textarea id="chatInput" class="chat-textarea" rows="2"
+                placeholder="Ask WanderAI anything about travel..."></textarea>
+              <div class="chat-actions">
+                <button class="btn btn-send" id="sendBtn" onclick="sendMessage()">
+                  <i class="bi bi-send-fill"></i>
+                </button>
+              </div>
+            </div>
+            <div class="chat-hint text-muted small mt-1">
+              <i class="bi bi-info-circle"></i> Press <kbd>Enter</kbd> to send, <kbd>Shift+Enter</kbd> for new line
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: Panels -->
+      <div class="col-lg-5">
+
+        <!-- Quick Actions -->
+        <div class="dash-panel mb-4">
+          <div class="panel-header"><h5 class="mb-0 fw-bold">Quick Actions</h5></div>
+          <div class="quick-action-grid">
+            <a href="/trip-planner" class="quick-action-btn">
+              <i class="bi bi-map-fill" style="color:#3b82f6"></i>
+              <span>Plan Trip</span>
+            </a>
+            <a href="/destinations" class="quick-action-btn">
+              <i class="bi bi-compass" style="color:#10b981"></i>
+              <span>Discover</span>
+            </a>
+            <a href="/budget" class="quick-action-btn">
+              <i class="bi bi-calculator" style="color:#f59e0b"></i>
+              <span>Budget</span>
+            </a>
+            <a href="/profile" class="quick-action-btn">
+              <i class="bi bi-person-gear" style="color:#8b5cf6"></i>
+              <span>Profile</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Popular Destinations -->
+        <div class="dash-panel mb-4">
+          <div class="panel-header">
+            <h5 class="mb-0 fw-bold">Popular Destinations</h5>
+            <a href="/destinations" class="btn btn-sm btn-link p-0 text-decoration-none">View all</a>
+          </div>
+          <div class="dest-list">
+            {% set destinations = [
+              ('🗼','Tokyo, Japan','Apr–Jun, Sep–Nov','★★★★★','From $2,500'),
+              ('🏛','Rome, Italy','Apr–Jun, Sep–Oct','★★★★★','From $1,800'),
+              ('🏝','Bali, Indonesia','Apr–Oct','★★★★☆','From $900'),
+              ('🏙','New York, USA','Sep–Nov, Mar–May','★★★★☆','From $2,200'),
+              ('🌊','Maldives','Nov–Apr','★★★★★','From $3,500')
+            ] %}
+            {% for flag, name, season, rating, price in destinations %}
+            <div class="dest-item" onclick="askAbout('{{ name }}')">
+              <div class="dest-flag">{{ flag }}</div>
+              <div class="dest-info">
+                <div class="dest-name fw-semibold">{{ name }}</div>
+                <div class="dest-season text-muted small">{{ season }} · {{ rating }}</div>
+              </div>
+              <div class="dest-price text-muted small">{{ price }}</div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- Travel Tips -->
+        <div class="dash-panel">
+          <div class="panel-header"><h5 class="mb-0 fw-bold">💡 AI Travel Tips</h5></div>
+          <div class="tips-carousel" id="tipCarousel">
+            <div class="tip-item active">
+              <i class="bi bi-lightbulb-fill text-warning me-2"></i>
+              Book flights 6–8 weeks in advance for the best prices on international routes.
+            </div>
+            <div class="tip-item">
+              <i class="bi bi-shield-check text-success me-2"></i>
+              Always purchase travel insurance — it can save thousands in emergencies.
+            </div>
+            <div class="tip-item">
+              <i class="bi bi-currency-exchange text-primary me-2"></i>
+              Use local ATMs instead of airport currency exchange to get better rates.
+            </div>
+            <div class="tip-item">
+              <i class="bi bi-wifi text-info me-2"></i>
+              Get a local SIM card on arrival — it's often cheaper than roaming charges.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+{% endblock %}
