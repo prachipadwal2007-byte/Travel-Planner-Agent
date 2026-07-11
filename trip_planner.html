@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+{% block title %}Trip Planner — WanderAI{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="container py-5">
+
+    <!-- Page Header -->
+    <div class="page-header text-center mb-5 fade-in-up">
+      <div class="page-badge"><i class="bi bi-map"></i> AI Trip Planner</div>
+      <h1 class="page-title">Plan Your Perfect Trip</h1>
+      <p class="page-subtitle text-muted">Fill in your details and IBM Granite AI will generate a personalized day-by-day itinerary.</p>
+    </div>
+
+    <div class="row g-4 justify-content-center">
+
+      <!-- Trip Form -->
+      <div class="col-lg-5">
+        <div class="planner-card fade-in-up">
+          <h5 class="card-section-title"><i class="bi bi-sliders me-2"></i>Trip Details</h5>
+          <form id="tripForm">
+
+            <div class="form-group-custom mb-3">
+              <label class="form-label-custom">Destination <span class="required">*</span></label>
+              <div class="input-with-icon">
+                <i class="bi bi-geo-alt-fill"></i>
+                <input type="text" class="form-control custom-input" id="destination"
+                  placeholder="e.g. Paris, France" required />
+              </div>
+            </div>
+
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label class="form-label-custom">Start Date</label>
+                <input type="date" class="form-control custom-input" id="startDate" />
+              </div>
+              <div class="col-6">
+                <label class="form-label-custom">Trip Duration</label>
+                <div class="input-group">
+                  <input type="number" class="form-control custom-input" id="days" value="5" min="1" max="21" />
+                  <span class="input-group-text">days</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label-custom">Budget Tier</label>
+              <div class="budget-selector" id="budgetSelector">
+                <button type="button" class="budget-btn" data-value="Budget">
+                  <i class="bi bi-piggy-bank"></i> Budget
+                </button>
+                <button type="button" class="budget-btn active" data-value="Mid-range">
+                  <i class="bi bi-cash-stack"></i> Mid-range
+                </button>
+                <button type="button" class="budget-btn" data-value="Luxury">
+                  <i class="bi bi-gem"></i> Luxury
+                </button>
+              </div>
+              <input type="hidden" id="budgetTier" value="Mid-range" />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label-custom">Group Type</label>
+              <select class="form-select custom-input" id="groupType">
+                <option value="Solo">👤 Solo Traveler</option>
+                <option value="Couple">💑 Couple</option>
+                <option value="Family">👨‍👩‍👧‍👦 Family with Kids</option>
+                <option value="Group of Friends">👫 Group of Friends</option>
+                <option value="Business">💼 Business Travel</option>
+              </select>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label-custom">Travel Interests</label>
+              <div class="interest-tags" id="interestTags">
+                {% set interests = ['Culture','Food','Adventure','Beach','Nature','History','Shopping','Nightlife','Photography','Wellness'] %}
+                {% for interest in interests %}
+                <button type="button" class="interest-tag" data-value="{{ interest }}">{{ interest }}</button>
+                {% endfor %}
+              </div>
+              <input type="hidden" id="selectedInterests" value="Culture,Food" />
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label-custom">Special Requests</label>
+              <textarea class="form-control custom-input" id="specialRequests" rows="2"
+                placeholder="Dietary restrictions, accessibility needs, must-see places..."></textarea>
+            </div>
+
+            <button type="submit" class="btn btn-primary btn-lg w-100 btn-generate" id="generateBtn">
+              <i class="bi bi-stars me-2"></i>Generate AI Itinerary
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- Result Panel -->
+      <div class="col-lg-7">
+        <div class="result-panel fade-in-up" id="resultPanel">
+
+          <!-- Placeholder -->
+          <div class="result-placeholder" id="resultPlaceholder">
+            <div class="placeholder-icon">🗺</div>
+            <h4>Your Itinerary Will Appear Here</h4>
+            <p class="text-muted">Fill in your trip details and click <strong>Generate AI Itinerary</strong> to get started.</p>
+            <div class="placeholder-features">
+              <div class="pf-item"><i class="bi bi-check-circle-fill text-success"></i> Day-wise plans</div>
+              <div class="pf-item"><i class="bi bi-check-circle-fill text-success"></i> Hotel recommendations</div>
+              <div class="pf-item"><i class="bi bi-check-circle-fill text-success"></i> Local food picks</div>
+              <div class="pf-item"><i class="bi bi-check-circle-fill text-success"></i> Budget breakdown</div>
+              <div class="pf-item"><i class="bi bi-check-circle-fill text-success"></i> Packing checklist</div>
+              <div class="pf-item"><i class="bi bi-check-circle-fill text-success"></i> Safety tips</div>
+            </div>
+          </div>
+
+          <!-- Loading State -->
+          <div class="result-loading d-none" id="resultLoading">
+            <div class="loading-animation">
+              <div class="plane-loader">✈</div>
+              <h5 class="mt-3">WanderAI is crafting your itinerary...</h5>
+              <p class="text-muted small">IBM Granite is analyzing your preferences and building a personalized plan.</p>
+              <div class="loading-steps mt-3" id="loadingSteps">
+                <div class="loading-step active" id="step1"><i class="bi bi-check-circle-fill"></i> Analyzing destination</div>
+                <div class="loading-step" id="step2"><i class="bi bi-circle"></i> Building day-wise schedule</div>
+                <div class="loading-step" id="step3"><i class="bi bi-circle"></i> Finding accommodations</div>
+                <div class="loading-step" id="step4"><i class="bi bi-circle"></i> Calculating budget</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Itinerary Output -->
+          <div class="result-content d-none" id="resultContent">
+            <div class="result-header d-flex align-items-center justify-content-between mb-3">
+              <div>
+                <h5 class="mb-1 fw-bold" id="resultTitle">Your Itinerary</h5>
+                <span class="text-muted small" id="resultMeta"></span>
+              </div>
+              <div class="d-flex gap-2">
+                <button class="btn btn-sm btn-outline-primary" onclick="copyItinerary()">
+                  <i class="bi bi-copy me-1"></i>Copy
+                </button>
+                <button class="btn btn-sm btn-outline-secondary" onclick="newItinerary()">
+                  <i class="bi bi-arrow-clockwise me-1"></i>New
+                </button>
+              </div>
+            </div>
+            <div class="itinerary-output" id="itineraryOutput"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/trip_planner.js') }}"></script>
+{% endblock %}

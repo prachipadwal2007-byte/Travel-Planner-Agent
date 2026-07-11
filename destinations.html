@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Destinations — WanderAI{% endblock %}
+
+{% block content %}
+<div class="page-container">
+  <div class="container py-5">
+
+    <!-- Header -->
+    <div class="page-header text-center mb-5 fade-in-up">
+      <div class="page-badge"><i class="bi bi-compass"></i> AI Recommendations</div>
+      <h1 class="page-title">Discover Your Next Destination</h1>
+      <p class="page-subtitle text-muted">Tell us what you love and IBM Granite AI will find the perfect destinations for you.</p>
+    </div>
+
+    <div class="row g-4">
+
+      <!-- Search Form -->
+      <div class="col-lg-4 fade-in-up">
+        <div class="planner-card sticky-card">
+          <h5 class="card-section-title"><i class="bi bi-sliders me-2"></i>Your Preferences</h5>
+
+          <div class="mb-3">
+            <label class="form-label-custom">What excites you?</label>
+            <div class="interest-tags" id="prefTags">
+              {% set prefs = ['Beaches','Mountains','History','Culture','Adventure','Food & Wine','Wildlife','Photography','Luxury','Budget','Romance','Family','Solo','Architecture','Nightlife'] %}
+              {% for p in prefs %}
+              <button type="button" class="interest-tag {% if loop.index <= 3 %}selected{% endif %}" data-value="{{ p }}">{{ p }}</button>
+              {% endfor %}
+            </div>
+            <input type="hidden" id="selectedPrefs" value="Beaches,History,Culture" />
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label-custom">Budget Range</label>
+            <select class="form-select custom-input" id="destBudget">
+              <option value="Budget (under $1000)">💚 Budget (under $1,000)</option>
+              <option value="Mid-range ($1000-$3000)" selected>💛 Mid-range ($1,000–$3,000)</option>
+              <option value="Luxury ($3000+)">💜 Luxury ($3,000+)</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label-custom">Travel Season</label>
+            <select class="form-select custom-input" id="travelSeason">
+              <option value="any season">🌍 Any Season</option>
+              <option value="Spring (March-May)">🌸 Spring (Mar–May)</option>
+              <option value="Summer (June-August)">☀ Summer (Jun–Aug)</option>
+              <option value="Autumn (September-November)">🍂 Autumn (Sep–Nov)</option>
+              <option value="Winter (December-February)">❄ Winter (Dec–Feb)</option>
+            </select>
+          </div>
+
+          <div class="mb-4">
+            <label class="form-label-custom">Additional Preferences</label>
+            <textarea class="form-control custom-input" id="addlPrefs" rows="2"
+              placeholder="e.g. Visa-free for US citizens, English-speaking..."></textarea>
+          </div>
+
+          <button class="btn btn-primary btn-lg w-100" id="discoverBtn" onclick="discoverDestinations()">
+            <i class="bi bi-stars me-2"></i>Discover Destinations
+          </button>
+        </div>
+      </div>
+
+      <!-- Results -->
+      <div class="col-lg-8 fade-in-up">
+
+        <!-- Featured Cards (static inspiration) -->
+        <div id="featuredSection">
+          <h5 class="fw-bold mb-3">🔥 Trending Destinations</h5>
+          <div class="row g-3 mb-4" id="trendingCards">
+            {% set trending = [
+              ('🗼','Tokyo','Japan','Asia','★★★★★','$2,500+','Culture, Food, Tech','Apr–Jun'),
+              ('🏝','Bali','Indonesia','Asia','★★★★☆','$900+','Beach, Nature, Wellness','Apr–Oct'),
+              ('🏛','Rome','Italy','Europe','★★★★★','$1,800+','History, Food, Art','Apr–Jun'),
+              ('🌊','Santorini','Greece','Europe','★★★★★','$2,800+','Romance, Beach, Views','Jun–Sep'),
+              ('🦁','Nairobi','Kenya','Africa','★★★★☆','$2,200+','Safari, Wildlife, Nature','Jan–Mar'),
+              ('🌆','New York','USA','Americas','★★★★☆','$2,500+','Culture, Shopping, Food','Sep–Nov')
+            ] %}
+            {% for flag, city, country, region, rating, price, tags, season in trending %}
+            <div class="col-md-6 col-xl-4">
+              <div class="dest-card" onclick="askAboutDestination('{{ city }}, {{ country }}')">
+                <div class="dest-card-flag">{{ flag }}</div>
+                <div class="dest-card-body">
+                  <div class="dest-card-region">{{ region }}</div>
+                  <h6 class="dest-card-name">{{ city }}</h6>
+                  <p class="dest-card-country text-muted small">{{ country }}</p>
+                  <div class="dest-card-rating">{{ rating }}</div>
+                  <div class="dest-card-meta d-flex justify-content-between mt-2">
+                    <span class="badge bg-primary-soft text-primary">{{ price }}</span>
+                    <span class="text-muted small">{{ season }}</span>
+                  </div>
+                  <div class="dest-card-tags mt-2">
+                    {% for tag in tags.split(', ') %}
+                    <span class="dest-tag">{{ tag }}</span>
+                    {% endfor %}
+                  </div>
+                </div>
+                <div class="dest-card-cta">
+                  <span>Plan this trip <i class="bi bi-arrow-right"></i></span>
+                </div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- AI Recommendations Output -->
+        <div class="ai-results-panel d-none" id="aiResultsPanel">
+          <div class="results-header d-flex align-items-center justify-content-between mb-3">
+            <h5 class="fw-bold mb-0">🤖 AI Recommendations for You</h5>
+            <button class="btn btn-sm btn-outline-secondary" onclick="resetDestinations()">
+              <i class="bi bi-arrow-clockwise"></i> Reset
+            </button>
+          </div>
+          <div class="ai-output-box" id="aiDestOutput"></div>
+        </div>
+
+        <!-- Loading -->
+        <div class="text-center py-5 d-none" id="destLoading">
+          <div class="plane-loader">✈</div>
+          <p class="mt-3 text-muted">Discovering destinations with IBM Granite AI...</p>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/destinations.js') }}"></script>
+{% endblock %}
