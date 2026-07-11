@@ -1,0 +1,223 @@
+{% extends "base.html" %}
+{% block title %}WanderAI — AI-Powered Travel Planner{% endblock %}
+
+{% block content %}
+
+<!-- ── Hero Section ── -->
+<section class="hero-section">
+  <div class="hero-bg-animation">
+    <span class="floating-icon" style="--i:1">✈</span>
+    <span class="floating-icon" style="--i:2">🌍</span>
+    <span class="floating-icon" style="--i:3">🗺</span>
+    <span class="floating-icon" style="--i:4">🏖</span>
+    <span class="floating-icon" style="--i:5">🏔</span>
+    <span class="floating-icon" style="--i:6">🌸</span>
+  </div>
+  <div class="container hero-content">
+    <div class="row align-items-center min-vh-85">
+      <div class="col-lg-6 hero-text fade-in-up">
+        <div class="hero-badge mb-3">
+          <i class="bi bi-stars"></i> Powered by IBM Granite AI
+        </div>
+        <h1 class="hero-title">
+          Plan Your <span class="text-gradient">Dream Trip</span><br/>with AI Intelligence
+        </h1>
+        <p class="hero-subtitle">
+          WanderAI crafts personalized travel itineraries, budget plans, and
+          destination recommendations — powered by IBM watsonx.ai Granite models.
+        </p>
+        <div class="hero-actions d-flex gap-3 flex-wrap mt-4">
+          <a href="/trip-planner" class="btn btn-hero-primary">
+            <i class="bi bi-map"></i> Start Planning
+          </a>
+          <a href="/dashboard" class="btn btn-hero-secondary">
+            <i class="bi bi-grid"></i> View Dashboard
+          </a>
+        </div>
+        <div class="hero-stats d-flex gap-4 mt-5 flex-wrap">
+          <div class="stat-item">
+            <div class="stat-number">200+</div>
+            <div class="stat-label">Destinations</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">AI</div>
+            <div class="stat-label">Itineraries</div>
+          </div>
+          <div class="stat-item">
+            <div class="stat-number">24/7</div>
+            <div class="stat-label">Available</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-lg-6 hero-visual fade-in-right">
+        <div class="hero-card-stack">
+          <div class="hero-card card-1">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <div class="avatar-dot bg-success"></div>
+              <span class="fw-semibold small">WanderAI</span>
+            </div>
+            <p class="small mb-0">📍 Here's your 7-day Tokyo itinerary with day-wise plans, restaurant picks, and a ¥150,000 budget breakdown...</p>
+          </div>
+          <div class="hero-card card-2">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="bi bi-geo-alt-fill text-danger"></i>
+              <span class="fw-semibold small">Top Pick</span>
+            </div>
+            <p class="small mb-0 text-muted">Santorini, Greece — Best in June–September. Budget from $2,400.</p>
+          </div>
+          <div class="hero-card card-3">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="bi bi-wallet2 text-warning"></i>
+              <span class="fw-semibold small">Budget Plan</span>
+            </div>
+            <div class="budget-mini-bar">
+              <div class="budget-segment seg-flights" style="width:35%">✈ Flights</div>
+              <div class="budget-segment seg-hotel" style="width:30%">🏨 Hotel</div>
+              <div class="budget-segment seg-food" style="width:20%">🍜 Food</div>
+              <div class="budget-segment seg-misc" style="width:15%">+ More</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Features Section ── -->
+<section class="features-section py-6">
+  <div class="container">
+    <div class="section-header text-center mb-5 fade-in-up">
+      <h2 class="section-title">Everything You Need to <span class="text-gradient">Travel Smarter</span></h2>
+      <p class="section-subtitle text-muted">AI-powered tools for every stage of your journey</p>
+    </div>
+    <div class="row g-4">
+      {% set features = [
+        ('bi-map-fill','#3b82f6','Trip Planner','Generate day-by-day itineraries with timing, activities, and accommodation for any destination.'),
+        ('bi-geo-alt-fill','#10b981','Destination Discovery','Get personalized destination recommendations based on your interests, budget, and travel season.'),
+        ('bi-wallet2','#f59e0b','Budget Planner','Detailed cost breakdowns across flights, hotels, food, activities — with money-saving tips.'),
+        ('bi-shield-check','#8b5cf6','Safety & Advisories','Real-time travel safety tips, visa requirements, health advisories, and emergency contacts.'),
+        ('bi-bag-check','#ef4444','Smart Packing List','Climate-aware packing checklists tailored to your destination, trip length, and travel style.'),
+        ('bi-chat-dots-fill','#06b6d4','AI Chat Concierge','Chat naturally with WanderAI for any travel question — available 24/7, no waiting.')
+      ] %}
+      {% for icon, color, title, desc in features %}
+      <div class="col-md-6 col-lg-4 fade-in-up">
+        <div class="feature-card">
+          <div class="feature-icon" style="background: {{ color }}20; color: {{ color }}">
+            <i class="bi {{ icon }}"></i>
+          </div>
+          <h4 class="feature-title mt-3">{{ title }}</h4>
+          <p class="feature-desc text-muted">{{ desc }}</p>
+          <a href="/{% if title == 'Trip Planner' %}trip-planner{% elif title == 'Destination Discovery' %}destinations{% elif title == 'Budget Planner' %}budget{% elif title == 'AI Chat Concierge' %}dashboard{% else %}trip-planner{% endif %}" class="feature-link">
+            Explore <i class="bi bi-arrow-right"></i>
+          </a>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ── How It Works ── -->
+<section class="how-section py-6">
+  <div class="container">
+    <div class="section-header text-center mb-5">
+      <h2 class="section-title">Plan in <span class="text-gradient">3 Easy Steps</span></h2>
+    </div>
+    <div class="row g-4 align-items-center">
+      <div class="col-md-4 text-center fade-in-up">
+        <div class="step-circle">1</div>
+        <h5 class="mt-3 fw-bold">Tell WanderAI</h5>
+        <p class="text-muted">Share your destination, dates, budget, and interests via chat or form.</p>
+      </div>
+      <div class="col-md-4 text-center fade-in-up">
+        <div class="step-circle step-circle-2">2</div>
+        <h5 class="mt-3 fw-bold">AI Generates Your Plan</h5>
+        <p class="text-muted">IBM Granite AI creates a personalized day-by-day itinerary in seconds.</p>
+      </div>
+      <div class="col-md-4 text-center fade-in-up">
+        <div class="step-circle step-circle-3">3</div>
+        <h5 class="mt-3 fw-bold">Travel with Confidence</h5>
+        <p class="text-muted">Get budget breakdowns, safety tips, packing lists and refine anytime.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Quick Chat CTA ── -->
+<section class="cta-section py-6">
+  <div class="container">
+    <div class="cta-card text-center fade-in-up">
+      <div class="cta-icon mb-3"><i class="bi bi-chat-heart-fill"></i></div>
+      <h2 class="fw-bold mb-2">Ask WanderAI Anything</h2>
+      <p class="text-muted mb-4">Type your travel question below and let IBM Granite AI answer instantly.</p>
+      <div class="quick-chat-box mx-auto">
+        <div class="quick-chat-messages" id="quickChatMessages">
+          <div class="chat-bubble ai-bubble">
+            <div class="bubble-avatar">✈</div>
+            <div class="bubble-content">Hi! I'm WanderAI 👋 Where would you like to travel? Ask me anything about destinations, budgets, or itineraries!</div>
+          </div>
+        </div>
+        <div class="quick-chat-input">
+          <input type="text" id="quickChatInput" class="form-control" placeholder="e.g. Plan a 5-day trip to Bali under $1500..." />
+          <button class="btn btn-primary" id="quickChatBtn">
+            <i class="bi bi-send-fill"></i>
+          </button>
+        </div>
+        <div class="quick-suggestions d-flex gap-2 flex-wrap mt-2">
+          <button class="suggestion-chip" onclick="setQuickChat('Best beaches in Southeast Asia under $1000')">🏖 SE Asia Beaches</button>
+          <button class="suggestion-chip" onclick="setQuickChat('7-day Europe trip on a budget')">🏰 Budget Europe</button>
+          <button class="suggestion-chip" onclick="setQuickChat('Solo travel safety tips for Japan')">🗼 Japan Solo Travel</button>
+          <button class="suggestion-chip" onclick="setQuickChat('Honeymoon destinations under $3000')">💕 Honeymoon Ideas</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/chat.js') }}"></script>
+<script>
+  // Initialize quick chat on home page
+  const quickBtn = document.getElementById('quickChatBtn');
+  const quickInput = document.getElementById('quickChatInput');
+
+  function setQuickChat(text) {
+    quickInput.value = text;
+    quickInput.focus();
+  }
+
+  function sendQuickChat() {
+    const msg = quickInput.value.trim();
+    if (!msg) return;
+    appendQuickMessage(msg, 'user');
+    quickInput.value = '';
+    quickBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+    quickBtn.disabled = true;
+    sendChatMessage(msg, [], {}, function(reply) {
+      appendQuickMessage(reply, 'ai');
+      quickBtn.innerHTML = '<i class="bi bi-send-fill"></i>';
+      quickBtn.disabled = false;
+    }, function(err) {
+      appendQuickMessage('Sorry, something went wrong. Please try again.', 'ai');
+      quickBtn.innerHTML = '<i class="bi bi-send-fill"></i>';
+      quickBtn.disabled = false;
+    });
+  }
+
+  function appendQuickMessage(text, role) {
+    const container = document.getElementById('quickChatMessages');
+    const div = document.createElement('div');
+    div.className = `chat-bubble ${role === 'user' ? 'user-bubble' : 'ai-bubble'}`;
+    div.innerHTML = role === 'user'
+      ? `<div class="bubble-content">${escapeHtml(text)}</div><div class="bubble-avatar user-av"><i class="bi bi-person-fill"></i></div>`
+      : `<div class="bubble-avatar">✈</div><div class="bubble-content">${formatMarkdown(text)}</div>`;
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+  }
+
+  quickBtn.addEventListener('click', sendQuickChat);
+  quickInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendQuickChat(); });
+</script>
+{% endblock %}
